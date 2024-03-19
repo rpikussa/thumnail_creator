@@ -1,14 +1,9 @@
 // dependencies
 import AWS from "aws-sdk";
-AWS.config.update({ region: process.env.REGION_NAME });
-
-const s3 = new AWS.S3({ apiVersion: "2006-03-01" });
-
-import { Readable } from 'stream';
-
 import sharp from 'sharp';
-import util from 'util';
 
+AWS.config.update({ region: process.env.REGION_NAME });
+const s3 = new AWS.S3({ apiVersion: "2006-03-01" });
 
 export const s3_thumbnail_generator = async (event, context) => {
  
@@ -18,7 +13,7 @@ export const s3_thumbnail_generator = async (event, context) => {
   const srcBucket = event.Records[0].s3.bucket.name;
   
   const srcKey    = decodeURIComponent(event.Records[0].s3.object.key.replace(/\+/g, " "));
-  const dstBucket = srcBucket + "-resized";
+  const dstBucket = process.env.DESTINATION_BUCKET_NAME;
   const dstKey    = "resized-" + srcKey;
 
   // Infer the image type from the file suffix
@@ -45,21 +40,13 @@ export const s3_thumbnail_generator = async (event, context) => {
     var currentImageObject = await s3.getObject(params)
     .promise()
     .then((data) => {
-      console.log(data)
       return data
 
     }).catch((err) => {
       throw new Error(err)
 
     });
-    var stream = currentImageObject.Body;
-    //console.log(stream)
-    // Convert stream to buffer to pass to sharp resize function.
-    //if (stream instanceof Readable) {
-      //var content_buffer = Buffer.concat(await stream.toArray());      
-    //} else {
-      //throw new Error('Unknown object stream type');
-    //}
+    var buffer = currentImageObject.Body;
 
   } catch (error) {
     console.log(error);
@@ -68,7 +55,7 @@ export const s3_thumbnail_generator = async (event, context) => {
 
   // Use the sharp module to resize the image and save in a buffer.
   try {    
-    var output_buffer = await sharp(stream).resize(width).toBuffer();
+    var output_buffer = await sharp(buffer).resize(width).toBuffer();
 
   } catch (error) {
     console.log(error);
@@ -84,16 +71,13 @@ export const s3_thumbnail_generator = async (event, context) => {
     ContentType: "image"
   };
 
-  const putResult = await s3.upload(destparams).promise()
+  await s3.upload(destparams).promise()
   .then((success) => {
-    console.log(`Success message: ${success}`)
+    console.log('Successfully resized ' + srcBucket + '/' + srcKey + ' and uploaded to ' + dstBucket + '/' + dstKey);
     return success
   })
   .catch((err) => {
     console.log(err);
     return;
   });
-
-  console.log('Successfully resized ' + srcBucket + '/' + srcKey + ' and uploaded to ' + dstBucket + '/' + dstKey);
-
 };

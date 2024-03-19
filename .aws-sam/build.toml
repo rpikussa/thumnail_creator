@@ -5,7 +5,7 @@ codeuri = "/home/ricardo/workspace/project_thumbnail/thumbnail_manager/handler"
 runtime = "nodejs20.x"
 architecture = "x86_64"
 handler = "app.s3_thumbnail_generator"
-manifest_hash = "50f414ee07cc48322ffb3a21b137dc19"
+manifest_hash = "bc7a6edf09388e523e383278efa8a99b"
 packagetype = "Zip"
 functions = ["CreateThumbnailFunction"]
 

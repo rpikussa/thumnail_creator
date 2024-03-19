@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Thumbnail generator with NodeJS 20.x",
   "main": "app.js",
-  "repository": "",
+  "repository": "https://github.com/rpikussa/thumnail_creator",
   "author": "SAM CLI",
   "license": "MIT",
   "dependencies": {

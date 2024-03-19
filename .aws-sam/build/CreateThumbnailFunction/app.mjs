@@ -4,10 +4,8 @@ AWS.config.update({ region: process.env.REGION_NAME });
 
 const s3 = new AWS.S3({ apiVersion: "2006-03-01" });
 
-import { Readable } from 'stream';
-
 import sharp from 'sharp';
-import util from 'util';
+
 
 
 export const s3_thumbnail_generator = async (event, context) => {
@@ -18,7 +16,7 @@ export const s3_thumbnail_generator = async (event, context) => {
   const srcBucket = event.Records[0].s3.bucket.name;
   
   const srcKey    = decodeURIComponent(event.Records[0].s3.object.key.replace(/\+/g, " "));
-  const dstBucket = srcBucket + "-resized";
+  const dstBucket = process.env.DESTINATION_BUCKET_NAME;
   const dstKey    = "resized-" + srcKey;
 
   // Infer the image type from the file suffix
@@ -45,7 +43,6 @@ export const s3_thumbnail_generator = async (event, context) => {
     var currentImageObject = await s3.getObject(params)
     .promise()
     .then((data) => {
-      console.log(data)
       return data
 
     }).catch((err) => {
@@ -84,16 +81,14 @@ export const s3_thumbnail_generator = async (event, context) => {
     ContentType: "image"
   };
 
-  const putResult = await s3.upload(destparams).promise()
+  await s3.upload(destparams).promise()
   .then((success) => {
     console.log(`Success message: ${success}`)
+    console.log('Successfully resized ' + srcBucket + '/' + srcKey + ' and uploaded to ' + dstBucket + '/' + dstKey);
     return success
   })
   .catch((err) => {
     console.log(err);
     return;
   });
-
-  console.log('Successfully resized ' + srcBucket + '/' + srcKey + ' and uploaded to ' + dstBucket + '/' + dstKey);
-
 };

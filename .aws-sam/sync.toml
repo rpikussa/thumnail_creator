@@ -2,8 +2,8 @@
 
 [sync_state]
 dependency_layer = false
-latest_infra_sync_time = "2024-03-18T20:23:24.657768"
+latest_infra_sync_time = "2024-03-19T14:55:38.872741"
 
 [resource_sync_states."ZipFunctionSyncFlow:CreateThumbnailFunction"]
-hash = "2df86e087f1ccb3146200cf8a9e74d120fe500cb047f399b30f504272afd1b23"
-sync_time = "2024-03-19T14:30:52.729738"
+hash = "ad695c01b26a3c861a0002a36803b4f214ded97b1f6cb08bb356121d0194ea4c"
+sync_time = "2024-03-19T14:47:42.072240"

@@ -13,8 +13,9 @@ Globals:
     MemorySize: 128
     Environment:
       Variables:
-        THUMBNAIL_SIZE: 128
-        REGION_NAME: "us-east-1"  
+        THUMBNAIL_SIZE: 200
+        REGION_NAME: "us-east-1"
+        DESTINATION_BUCKET_NAME: "thumbnail-manager-app-resized-rap"
 
 Resources:
   CreateThumbnailFunction:
