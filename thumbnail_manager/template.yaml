@@ -1,0 +1,59 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  thumbnail_manager
+
+  Sample SAM Template for thumbnail_manager
+
+Globals:
+  Function:
+    Timeout: 60
+    LoggingConfig:
+      LogFormat: JSON
+    MemorySize: 128
+    Environment:
+      Variables:
+        THUMBNAIL_SIZE: 128
+        REGION_NAME: "us-east-1"  
+
+Resources:
+  CreateThumbnailFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: CreateThumbnailFunction
+      CodeUri: handler/
+      Handler: app.s3_thumbnail_generator
+      Runtime: nodejs20.x
+      Architectures:
+      - x86_64
+      Policies:
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action: 's3:*'
+              Resource: '*' 
+      Events:
+        CreateThumbnailEvent:
+          Type: S3
+          Properties:
+            Bucket: !Ref SourceBucket
+            Events: s3:ObjectCreated:*
+  SourceBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: thumbnail-manager-app-rap
+
+
+#Outputs:
+  # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
+  # Find out more about other implicit resources you can reference within SAM
+  # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
+  #HelloWorldApi:
+    #Description: API Gateway endpoint URL for Prod stage for Thumbnail Manager function
+    #Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/thumbnail/"
+  #CreateThumbnailFunction:
+    #Description: Thumbnail manager Lambda Function ARN
+    #Value: !GetAtt CreateThumbnailFunction.Arn
+  #CreateThumbnailFunctionIamRole:
+    #Description: Implicit IAM Role created for Thumbnail Manager function
+    #Value: !GetAtt CreateThumbnailFunctionRole.Arn
